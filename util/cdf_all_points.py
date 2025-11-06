@@ -56,8 +56,14 @@ def metric_after_pp(args, cdf, train_tte, train_event, tte, is_dead, a0, b0, alp
     # calculate the mean
     surv = 1 - cdf
     surv = torch.concat([torch.ones((surv.shape[0], 1)).to(DEVICE), surv], dim=1)
-    tte2 = torch.concat([torch.tensor([0]).to(DEVICE), tte])
-    # dt = tte2[1:] - tte2[:-1]
+
+    tte2 = tte.unsqueeze(0).repeat(tte.shape[0], 1)
+    tte2 = torch.concat([torch.zeros(tte2.shape[0], 1).to(DEVICE), tte2], dim=1)
+
+    last_element = torch.where(surv[:, -1] != 0, tte2[:, -1]/(1-surv[:, -1]), tte2[:, -1]).unsqueeze(1)
+    tte2 = torch.cat([tte2, last_element], dim=1)
+
+    surv = torch.concat([surv, torch.zeros((surv.shape[0], 1)).to(DEVICE)], dim=1)
     integral = torch.trapezoid(surv, tte2)
 
     C_index = concordance_index(tte.cpu(), integral.cpu(), is_dead.cpu())
