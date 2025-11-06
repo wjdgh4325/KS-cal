@@ -107,11 +107,8 @@ class ModelSaver(object):
         model_args['dropout_rate'] = args.dropout_rate
         model_args['model_dist'] = args.model_dist
         model_args['num_cat_bins'] = args.num_cat_bins
-        model_args['use_max_pool'] = args.use_max_pool
-        model_args['big_gamma_nn'] = args.big_gamma_nn
         model_args['dataset'] = args.dataset
         model_args['hiddensize'] = args.hiddensize
-        model_args['lognormal_layers'] = args.lognormal_layers
         
         model = model_fn(data_dir="data", **model_args)
         model.load_state_dict(ckpt_dict['model_state'])
@@ -131,4 +128,5 @@ class ModelSaver(object):
         ckpt_dict = torch.load(ckpt_path, map_location=DEVICE)
         optimizer.load_state_dict(ckpt_dict['optimizer'])
         if lr_scheduler is not None:
+
             lr_scheduler.load_state_dict(ckpt_dict['lr_scheduler'])
