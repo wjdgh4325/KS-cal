@@ -63,9 +63,9 @@ def metric_after_pp(args, cdf, train_tte, train_event, tte, is_dead, a0, b0, alp
     C_index = concordance_index(tte.cpu(), integral.cpu(), is_dead.cpu())
     SCAL = util.s_calibration(points=cdf_diag, is_dead=is_dead, phase='test', args=args, device=DEVICE)
     DCAL = util.d_calibration(points=cdf_diag, is_dead=is_dead, args=args, phase='test', device=DEVICE)
-    KS_CAL, KS = util.get_p_value(args=args, cdf=cdf_diag, is_dead=is_dead, device=DEVICE)
+    _, KS = util.get_p_value(args=args, cdf=cdf_diag, is_dead=is_dead, device=DEVICE)
     KM_CAL = util.km_calibration(cdf=cdf, tte=tte, is_dead=is_dead, device=DEVICE)
     IBS = util.integrated_brier_score(train_tte=train_tte, train_event=train_event,
                                       test_tte=tte, test_event=is_dead, cdf_test=cdf, time=tte)
 
-    return C_index, SCAL, DCAL, KS, KS_CAL, KM_CAL, IBS
+    return C_index, SCAL, DCAL, KS, KM_CAL, IBS
