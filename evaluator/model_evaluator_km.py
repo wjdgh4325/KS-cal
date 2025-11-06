@@ -144,28 +144,18 @@ class ModelEvaluator_km(object):
                                          km_meter=records['km_meter'])
         approx_s_calibration = util.s_calibration(points=all_cdf, phase=phase, is_dead=is_dead, args=self.args, gamma=1e5, differentiable=False, device=DEVICE)
         KS_cal, KS = util.get_p_value(args=self.args, cdf=all_cdf, is_dead=is_dead, device=DEVICE) # check again
-        #approx_d_calibration_10 = util.d_calibration(points=all_cdf, is_dead=is_dead, nbins=10, gamma=1e5, differentiable=True, device=DEVICE)
         approx_d_calibration_20 = util.d_calibration(points=all_cdf, is_dead=is_dead, args=self.args, phase=phase, nbins=self.num_xcal_bins, gamma=1e5, differentiable=False, device=DEVICE)
-        #approx_d_calibration_40 = util.d_calibration(points=all_cdf, is_dead=is_dead, nbins=self.num_xcal_bins*2, gamma=1e5, differentiable=True, device=DEVICE)
-        #approx_d_calibration_60 = util.d_calibration(points=all_cdf, is_dead=is_dead, nbins=self.num_xcal_bins*3, gamma=1e5, differentiable=True, device=DEVICE)
 
         metrics[phase + '_' + 'NLL'] = metrics[phase + '_' + 'loss']
         metrics[phase + '_' + 'concordance'] = concordance
         metrics[phase + '_' + 'scal(20)'] = approx_s_calibration
-        #metrics[phase + '_' + 'dcal(10)'] = approx_d_calibration_10
         metrics[phase + '_' + 'dcal(20)'] = approx_d_calibration_20
-        #metrics[phase + '_' + 'dcal(40)'] = approx_d_calibration_40
-        #metrics[phase + '_' + 'dcal(60)'] = approx_d_calibration_60
         KM_cal = metrics[phase + '_' + 'KMcal']
         
         if self.model_dist in ['mtlr']:
             metrics[phase + '_' + 'loss'] = metrics[phase + '_' + 'loss'] + self.lam * KM_cal + regularizer
-            # metrics[phase + '_' + 'loss'] = metrics[phase + '_' + 'loss'] + self.lam * KS_cal + regularizer
-            # metrics[phase + '_' + 'loss'] = metrics[phase + '_' + 'loss'] + self.lam * approx_s_calibration + regularizer
         else:
             metrics[phase + '_' + 'loss'] = metrics[phase + '_' + 'loss'] + self.lam * KM_cal
-            # metrics[phase + '_' + 'loss'] = metrics[phase + '_' + 'loss'] + self.lam * KS_cal
-            # metrics[phase + '_' + 'loss'] = metrics[phase + '_' + 'loss'] + self.lam * approx_s_calibration
 
         metrics[phase + '_' + 'KScal'] = KS_cal
         metrics[phase + '_' + 'KS'] = KS
@@ -173,14 +163,9 @@ class ModelEvaluator_km(object):
         
         print(' ---- {} epoch Concordance {:.4f}'.format(phase, concordance))
         print(' ---- {} epoch end S-cal(20) {:.5f}'.format(phase, approx_s_calibration))
-        #print(' ---- {} epoch end D-cal(10) {:.5f}'.format(phase, approx_d_calibration_10))
         print(' ---- {} epoch end D-cal(20) {:.5f}'.format(phase, approx_d_calibration_20))
-        #print(' ---- {} epoch end D-cal(40) {:.5f}'.format(phase, approx_d_calibration_40))
-        #print(' ---- {} epoch end D-cal(60) {:.5f}'.format(phase, approx_d_calibration_60))
         print(' ---- {} epoch end KS-cal {:.5f}'.format(phase, KS_cal))
         print(' ---- {} epoch end KS {:.5f}'.format(phase, KS))
-
-        #print(torch.histogram(all_cdf.to('cpu'), bins=20, range=(0, 1)))
         
         return metrics
 
@@ -236,3 +221,4 @@ class ModelEvaluator_km(object):
         metrics = {phase + '_' + 'loss': loss_meter.avg}
 
         return metrics
+
