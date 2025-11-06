@@ -27,6 +27,7 @@ class BaseArgParser(object):
                                                                                       'gbsg', 'nacd', 'sequence', 'support',
                                                                                       'mimic', 'liver', 'stomach', 'lung'), help='Dataset to use. Gets mapped to dataset class name.')
         self.parser.add_argument('--verbose', action='store_true')
+        self.parser.add_argument('--loss_penalty_only', type=util.str_to_bool, default=False)
         self.parser.add_argument('--lam', type=float, default=0.0, help='regularization scale for d-calibration')
         self.parser.add_argument('--dropout_rate', type=float, default=0.1)
         self.parser.add_argument('--pred_type', type=str, default='mean', choices=('mean', 'mode'))
@@ -92,4 +93,5 @@ class BaseArgParser(object):
                 args.lr_milestones = util.args_to_list(args.lr_milestones, allow_empty=False)
 
         return args
+
 
