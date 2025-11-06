@@ -115,7 +115,7 @@ def train(args):
                     #weight = model.get_weight()
 
                 loss = 0
-                if not args.loss_scal_only:
+                if not args.loss_penalty_only:
                     """
                     if args.model_dist in ['mtlr']:
                         loss += loss_fn(pred_params, tgt, model_dist=args.model_dist) + util.ridge_norm(weight)*args.C1/2 + util.fused_norm(weight)*args.C2/2
@@ -123,12 +123,12 @@ def train(args):
                         loss += loss_fn(pred_params, tgt, model_dist=args.model_dist)
                     """
                     loss += loss_fn(pred_params, tgt, model_dist=args.model_dist)
-                if args.lam > 0 or args.loss_scal_only:
+                if args.lam > 0 or args.loss_penalty_only:
                     ks = compute_xcal(pred_params, tgt, args)
 
                     ks_accumulator += ks.detach().item()
 
-                    if args.loss_scal_only:
+                    if args.loss_penalty_only:
                         loss = ks
 
                     else:
@@ -195,4 +195,5 @@ if __name__ == '__main__':
 
     print('dataset name', args.dataset)
     train(args)
+
 
