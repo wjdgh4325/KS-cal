@@ -15,19 +15,19 @@ def get_p_value(args, cdf, is_dead, device='cpu'):
     is_dead = is_dead[order].unsqueeze(1)
     N = cdf.shape[0]
 
-    is_alive = (1 - is_dead).float()  # (n, 1)
+    is_alive = (1 - is_dead).float()
 
-    denom = 1 - F_sorted + EPS  # (n, 1)
-    weight = is_alive / denom  # (n, 1)
-    F_weight = F_sorted * weight  # (n, 1)
+    denom = 1 - F_sorted + EPS
+    weight = is_alive / denom
+    F_weight = F_sorted * weight
 
-    cum_weight = torch.cumsum(weight, dim=0)  # (n, 1)
-    cum_F_weight = torch.cumsum(F_weight, dim=0)  # (n, 1)
+    cum_weight = torch.cumsum(weight, dim=0)
+    cum_F_weight = torch.cumsum(F_weight, dim=0)
 
     cum_weight_shifted = F.pad(cum_weight[:-1], (0, 0, 1, 0), value=0.0)
     cum_F_weight_shifted = F.pad(cum_F_weight[:-1], (0, 0, 1, 0), value=0.0)
 
-    ecdf_cens = F_sorted * cum_weight_shifted - cum_F_weight_shifted  # (n, 1)
+    ecdf_cens = F_sorted * cum_weight_shifted - cum_F_weight_shifted
     ecdf_cens = torch.clamp(ecdf_cens, 0, N)
 
     ecdf_dead = torch.cumsum(is_dead, dim=0)
@@ -47,5 +47,6 @@ def get_p_value(args, cdf, is_dead, device='cpu'):
     KS = torch.max(KS_error1)
 
     return KS_cal, KS
+
 
 
