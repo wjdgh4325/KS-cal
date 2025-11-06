@@ -16,26 +16,6 @@ grad = torch.autograd.grad
 kl = torch.distributions.kl_divergence
 EPS = 1e-4
 
-def stratified_batch_sampler(dataset, batch_size):
-    events = dataset.get_target()[:, 1]
-    censored_indices = [i for i, event in enumerate(events) if event == 0]
-    uncensored_indices = [i for i, event in enumerate(events) if event == 1]
-    
-    num_batches = len(dataset) // batch_size
-    overall_censoring_rate = (events == 0).float().mean().item()
-    
-    for _ in range(num_batches):
-        censored_batch_size = int(batch_size * overall_censoring_rate)
-        uncensored_batch_size = batch_size - censored_batch_size
-
-        sampled_censored_indices = np.random.choice(censored_indices, censored_batch_size, replace=False)
-        sampled_uncensored_indices = np.random.choice(uncensored_indices, uncensored_batch_size, replace=False)
-        batch_indices = np.concatenate([sampled_censored_indices, sampled_uncensored_indices])
-        np.random.shuffle(batch_indices)
-
-        yield batch_indices
-
-# torch.multiprocessing.set_start_method('spawn', force = True)
 def censor_time_to_indicators(survival_time, censor_time):
     """
     assumes time and censor_time has been sampled continuously
@@ -187,12 +167,8 @@ def get_synthetic_loader(args, phase, is_training=True, shuffle=False, dist='log
         #surv_t = surv_t[:10000]
         #censor_t = censor_t[:10000]
 
-
     dataset = SyntheticDataset(x=x, surv_t=surv_t, censor_t=censor_t, phase=phase, is_training=is_training, censor=censor)
     loader = torch.utils.data.DataLoader(dataset, batch_size=args.batch_size, num_workers=args.num_workers, shuffle=shuffle)
-    # DataLoader 정의
-    # batch_sampler = stratified_batch_sampler(dataset, batch_size=args.batch_size)
-    # loader = torch.utils.data.DataLoader(dataset, batch_sampler=batch_sampler, num_workers=args.num_workers)
     
     loader.phase = phase
     loader.D_in = dataset.D_in
@@ -227,4 +203,5 @@ def get_real_loader(args, phase, is_training=True, data='metabric', shuffle=Fals
     print('-' * 69)
 
     return loader
+
     
