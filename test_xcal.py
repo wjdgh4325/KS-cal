@@ -41,9 +41,6 @@ if __name__ == '__main__':
     parser = TestArgParser()
     args = parser.parse_args()
 
-    if args.dataset == 'mnist':
-        assert args.model == 'SurvMNISTNN', "if dataset == mnist, model must be SurvMNISTNN"
-
     if args.model_dist in ['cat', 'mtlr']:
         # bin_boundaries, mid_points, marginal_counts = util.get_bin_boundaries(args)
         bin_boundaries, mid_points = util.get_bin_boundaries(args)
@@ -67,4 +64,5 @@ if __name__ == '__main__':
     pickle.dump(metrics, f)
     print("Wrote results to:", save_name + ".pkl")
     f.close()
+
     sys.stdout.flush()
