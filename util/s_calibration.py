@@ -6,9 +6,10 @@ def s_calibration(points, phase, is_dead, args, gamma=1.0, differentiable=False,
     new_is_dead[points > 1. - 1e-4] = 1
     points = points.to(device).view(-1, 1)
 
+    s = ((torch.arange(20) + 1) / 20).to(device)
+
     # NON-CENSORED POINTS
     points_dead = points[new_is_dead.long() == 1]
-    s = ((torch.arange(20) + 1) / 20).to(device)
 
     zeros = torch.zeros(s.shape[0]).to(device)
     lower_diff_dead = points_dead - zeros
@@ -51,3 +52,4 @@ def s_calibration(points, phase, is_dead, args, gamma=1.0, differentiable=False,
     partial_bin_assigned_weight = (upper_diff_within_bin/right_censored_interval_size).sum(0) / points.shape[0]
     
     return torch.pow(fraction_dead + partial_bin_assigned_weight - s, 2).sum() / s.shape[0]
+
