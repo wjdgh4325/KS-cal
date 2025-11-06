@@ -13,7 +13,7 @@ def get_train_loader(args, during_training=True):
         TRAIN = False
         SHUFFLE = False
 
-    if args.dataset == 'synthetic' or args.dataset == 'mnist':
+    if args.dataset == 'synthetic':
         train_loader = get_synthetic_loader(args=args, is_training=True, phase='train', shuffle=SHUFFLE, dist=args.synthetic_dist, censor=args.censor)
 
     else:
@@ -30,13 +30,13 @@ def get_eval_loaders(during_training, args):
         phase1 = 'valid'
         phase2 = 'test'
 
-    if args.dataset == 'synthetic' or args.dataset == 'mnist':
+    if args.dataset == 'synthetic':
         l1 = get_synthetic_loader(args, is_training=False, phase=phase1, shuffle=False, dist=args.synthetic_dist, censor=args.censor)
         l2 = get_synthetic_loader(args, is_training=False, phase=phase2, shuffle=False, dist=args.synthetic_dist, censor=args.censor)
 
         eval_loaders = [l1, l2]
 
-    elif args.dataset != 'synthetic' and args.dataset != 'mnist':
+    elif args.dataset != 'synthetic':
         l1 = get_real_loader(args, phase=phase1, is_training=False, data=args.dataset, shuffle=False)
         l2 = get_real_loader(args, phase=phase2, is_training=False, data=args.dataset, shuffle=False)
         
@@ -44,5 +44,6 @@ def get_eval_loaders(during_training, args):
 
     else:
         assert False, "Wrong Dataset Name"
+
 
     return eval_loaders
