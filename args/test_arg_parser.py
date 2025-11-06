@@ -11,5 +11,5 @@ class TestArgParser(BaseArgParser):
         self.parser.add_argument('--threshold', type=float, default=0.5, help='threshold for classification')
         self.parser.add_argument('--weight_decay', type=float, default=1e-4, help='Weight decay (i.e. L2 regularization factor).')
         self.parser.add_argument('--experiment_number', type=int, default=-1)
-        # self.parser.add_argument('--k', default=0, type=int, help='x')
         self.parser.add_argument('--loss_fn', type=str, default='mle', choices=('mle', 'crps'), help='Loss function to use.')
+
