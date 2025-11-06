@@ -21,3 +21,11 @@ python train_ks.py --name ks --dataset whas --data_dir data/whas/ --model Synthe
 
 # AFT
 python train_ks.py --name ks --dataset whas --data_dir data/whas/ --model AFTNN --model_dist weibull --lam 0 --lr 1e-2 --dropout_rate 0.1 --batch_size 64 --num_epochs 1000
+
+After training, do the post-processing by using checkpoints.
+# KSP
+python test.py --name ks --phase test --dropout_rate 0.0 --postprocessing True --dataset whas --data_dir data/whas/ --model SyntheticNN --model_dist cox --batch_size 982 --ckpt_path ckpts/whas/DeepSurv/cox_ks_ds_whas_lam0.0_dr0.1_bs64_lr0.0001_optimadam_epoch1000_seed1/best.pth.tar
+# CSD
+python CSD.py --name ks --phase test --dropout_rate 0.0 --dataset whas --data_dir data/whas/ --model SyntheticNN --model_dist cox --batch_size 982 --ckpt_path ckpts/whas/DeepSurv/cox_ks_ds_whas_lam0.0_dr0.1_bs64_lr0.0001_optimadam_epoch1000_seed1/best.pth.tar
+# CSD-iPOT
+python CSD-iPOT.py --name ks --phase test --dropout_rate 0.0 --dataset whas --data_dir data/whas/ --model SyntheticNN --model_dist cox --batch_size 982 --ckpt_path ckpts/whas/DeepSurv/cox_ks_ds_whas_lam0.0_dr0.1_bs64_lr0.0001_optimadam_epoch1000_seed1/best.pth.tar
