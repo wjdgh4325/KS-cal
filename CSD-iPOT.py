@@ -371,33 +371,6 @@ def CSD(args):
     print("KM-cal:", KM_cal.item())
     print("IBS:", IBS.item())
     print("CSD-iPOT time:", end_time - start_time)
-    # workbook = load_workbook(filename='./tmp2.xlsx')
-    # sheet = workbook.active
-    # last_row = sheet.max_row
-    # sheet.cell(row=last_row+1, column=1, value=(end_time - start_time))
-    # sheet.cell(row=last_row+1, column=2, value=(str(args.dataset) + '_' + str(args.model_dist)))
-    # workbook.save('./tmp2.xlsx')
-
-    workbook = load_workbook(filename='./tmp2.xlsx')
-    sheet = workbook.active
-    last_row = sheet.max_row
-    sheet.cell(row=last_row+1, column=1, value=C_index)
-    sheet.cell(row=last_row+1, column=2, value=S_cal.item())
-    sheet.cell(row=last_row+1, column=3, value=D_cal.item())
-    sheet.cell(row=last_row+1, column=4, value=KS.item())
-    # sheet.cell(row=last_row+1, column=5, value=KS_cal.item())
-    sheet.cell(row=last_row+1, column=5, value=KM_cal.item())
-    sheet.cell(row=last_row+1, column=6, value=IBS.item())
-    sheet.cell(row=last_row+1, column=7, value=(f'CSD-iPOT_{args.dataset}_{args.model_dist}_lam_{args.lam}'))
-    workbook.save('./tmp2.xlsx')
-    # ci = []
-    # mae_hinge = []
-    # mae_po = []
-    # rmse_hinge = []
-    # rmse_po = []
-    # ibs = []
-    # km_cal = []
-    # xcal_stats = []
 
     # c_index = evaler.concordance()[0]
     # ibs_score = evaler.integrated_brier_score(num_points=10)
@@ -425,13 +398,9 @@ def CSD(args):
     # print("KM-CAL:", km_cal)
     # print("X-cal:", xcal_stats)
 
-
 if __name__ == '__main__':
     parser = TestArgParser()
     args = parser.parse_args()
-
-    if args.dataset == 'mnist':
-        assert args.model == 'SurvMNISTNN', "if dataset == mnist, model must be SurvMNISTNN"
 
     if args.model_dist in ['cat', 'mtlr']:
         bin_boundaries, mid_points = util.get_bin_boundaries(args)
@@ -441,3 +410,4 @@ if __name__ == '__main__':
 
     with torch.no_grad():
         metrics = CSD(args)
+
