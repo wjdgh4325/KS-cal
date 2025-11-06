@@ -168,9 +168,7 @@ def get_predict_time(pred, args):
             pred_time = util.log_normal_mode(pred)
 
     elif args.model_dist == 'weibull':
-        logtwo = torch.tensor([2.0]).to(DEVICE).log()
-        inverse_concentration = 1.0 / pred.concentration
-        pred_time = pred.scale * logtwo.pow(inverse_concentration)
+        pred_time = pred.mean
         
         if torch.any(torch.isnan(pred_time)) or torch.any(torch.isinf(pred_time)):
             print(":(")
@@ -193,3 +191,4 @@ def get_logpdf_val(pred_params, tgt, args):
 
 def log_normal_mode(pytorch_distribution_object):
     return (pytorch_distribution_object.loc - pytorch_distribution_object.scale.pow(2)).exp()
+
