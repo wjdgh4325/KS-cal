@@ -34,8 +34,7 @@ def bad(a):
     return torch.any(torch.isnan(a))
 
 def random_function(x, out_sz=2):
-
-    with torch.no_grad(): 
+    with torch.no_grad():
         D = x.size()[1]
         layer_one = nn.Linear(D, out_sz)
         # init layer to have small params! important to avoid huge times!
@@ -44,6 +43,7 @@ def random_function(x, out_sz=2):
         w = layer_one.weight.data
         b = layer_one.bias.data
         z = layer_one(x)
+
     return z, w, b
 
 def x_to_gamma_dist(x, hidden_sz=32):
@@ -88,6 +88,7 @@ def x_to_lognormal_dist(x, hidden_sz=32):
     scale = scale_from_loc(loc, C)
     # scale = root ( log [ ( 1+ sqrt(1+4C/exp(2mu))) / 2 ] )
     dist = LogNormal(loc, scale)
+    
     return dist, w, b, C
 
 def x_to_weibull_dist(x, hidden_sz=32):
@@ -109,8 +110,6 @@ print("dist is", args.dist)
 
 N = train_N + valid_N + test_N
 
-
-
 # also try 0.1, 1.0, and 5.0 instead of 10.0 for MVN covariance
 x_dist = MVN(loc=torch.zeros(args.D), covariance_matrix=10.0*torch.eye(args.D))
 #x_dist = StudentT(df=3.0*torch.ones(args.D), loc=torch.zeros(args.D), scale=torch.ones(args.D))
@@ -123,11 +122,9 @@ if args.dist == 'gamma':
 elif args.dist == 'lognormal':
     p_surv_t, wsurv, bsurv, csurv = x_to_lognormal_dist(x)
     p_censor_t, wcens, bcens, ccens = x_to_lognormal_dist(x)
-
 elif args.dist == 'weibull':
     p_surv_t, wsurv, bsurv = x_to_weibull_dist(x)
     p_censor_t, wcens, bcens = x_to_weibull_dist(x)
-
 else:
     assert False
 
@@ -152,7 +149,7 @@ censor_t_tr = censor_t[: VAL_SPLIT]
 censor_t_va = censor_t[VAL_SPLIT : TEST_SPLIT]
 censor_t_te = censor_t[TEST_SPLIT : ]
 
-if args.dist=='lognormal': 
+if args.dist == 'lognormal': 
     # SAVE LOC AND SCALE PARAMETERS
     loc_tr = p_surv_t.loc[ : VAL_SPLIT]
     scale_tr = p_surv_t.scale[ : VAL_SPLIT]
@@ -171,6 +168,7 @@ if args.dist=='lognormal':
     torch.save(scale_va, args.dist + '_scale_va.pt')
     torch.save(loc_te, args.dist + '_loc_te.pt')
     torch.save(scale_te, args.dist + '_scale_te.pt')
+    
 elif args.dist == 'gamma':
     # SAVE ALPHA AND BETA PARAMETERS
     alpha_tr = p_surv_t.concentration[ : VAL_SPLIT]
@@ -224,7 +222,6 @@ print("dist valid max mean", dist_va.mean.max())
 print("dist test min mean", dist_te.mean.min())
 print("dist test max mean", dist_te.mean.max())
 
-
 # CHECK TRUE LOGP
 logp_tr = dist_tr.log_prob(surv_t_tr).mean()
 logp_va = dist_va.log_prob(surv_t_va).mean()
@@ -249,3 +246,4 @@ torch.save(surv_t_te, args.dist + '_surv_t_te.pt')
 torch.save(censor_t_tr, args.dist + '_censor_t_tr.pt')
 torch.save(censor_t_va, args.dist + '_censor_t_va.pt')
 torch.save(censor_t_te, args.dist + '_censor_t_te.pt')
+
