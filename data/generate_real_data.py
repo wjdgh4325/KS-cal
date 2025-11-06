@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser(description='Data Gen')
 
 parser.add_argument('--dataset', type=str, default='whas', choices=['whas', 'metabric', 'gbsg', 'nacd',
                                                                     'sequence', 'support', 'mimic',
-                                                                    'liver', 'stomach', 'lung'])
+                                                                    'liver', 'stomach', 'lung', 'breast'])
 parser.add_argument('--seed', type=int, default=1)
 args = parser.parse_args()
 
@@ -420,3 +420,4 @@ elif args.dataset == 'mimic':
 
 else:
     assert False
+
