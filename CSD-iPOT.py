@@ -244,7 +244,7 @@ def make_strictly_increasing_below_one(arr, eps=1e-8):
             arr[i] = 1.0 - (len(arr) - i) * eps  # 뒤로 갈수록 더 작게
     return arr
 
-def CSD(args):
+def CSD_iPOT(args):
     model, ckpt_info = ModelSaver.load_model(args.ckpt_path, args)
     args.start_epoch = ckpt_info['epoch'] + 1
     args.device = DEVICE
@@ -409,5 +409,6 @@ if __name__ == '__main__':
         # args.marginal_counts = marginal_counts
 
     with torch.no_grad():
-        metrics = CSD(args)
+        metrics = CSD_iPOT(args)
+
 
