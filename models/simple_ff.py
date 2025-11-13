@@ -167,10 +167,7 @@ class SyntheticNN(nn.Module):
         
         self.model_dist = model_dist
         self.dataset = dataset
-        # recent experiments
-        #hidden_sizes = [1024, 1024, 1024]
 
-        # re-create original paper results for gamma data with cat model
         if self.dataset == 'whas':
             hidden_sizes = [24, 12, 12]
 
@@ -228,3 +225,4 @@ class SyntheticNN(nn.Module):
         model_args = {'D_in': self.D_in}
 
         return model_args
+
