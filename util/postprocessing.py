@@ -12,6 +12,7 @@ def postprocessing(args, cdf, is_dead, device='cpu', max_iters=10000, tol=1e-8, 
     cdf = cdf[order]
     cdf = cdf.unsqueeze(1)
     is_dead = is_dead[order].unsqueeze(1)
+    N = cdf.shape[0]
 
     # Initialize learnable parameters
     a0_raw = torch.nn.Parameter(torch.tensor(0.0, device=device))
@@ -28,8 +29,7 @@ def postprocessing(args, cdf, is_dead, device='cpu', max_iters=10000, tol=1e-8, 
 
         with torch.set_grad_enabled(True):
             is_alive = (1 - is_dead).float()
-            F_sorted = torch.sigmoid(torch.exp(a0_raw) * safe_logit(cdf) + b0)
-            F_sorted = F_sorted ** torch.exp(alpha_raw)
+            F_sorted = torch.sigmoid(torch.exp(a0_raw) * safe_logit(cdf) + b0) ** torch.exp(alpha_raw)
 
             denom = 1 - F_sorted + EPS
             weight = is_alive / denom
@@ -45,9 +45,9 @@ def postprocessing(args, cdf, is_dead, device='cpu', max_iters=10000, tol=1e-8, 
             ecdf_cens = torch.clamp(ecdf_cens, 0, N)
 
             ecdf_dead = torch.cumsum(is_dead, dim=0)
-            ecdf_upper = (ecdf_dead + ecdf_cens) / cdf.shape[0]
+            ecdf_upper = (ecdf_dead + ecdf_cens) / N
             ecdf_upper = torch.clamp(ecdf_upper, 0, 1)
-            ecdf_lower = ecdf_upper - is_dead / cdf.shape[0]
+            ecdf_lower = ecdf_upper - is_dead / N
 
             # KS_upper = torch.pow(ecdf_upper - F_sorted, 2)
             # KS_lower = torch.pow(ecdf_lower - F_sorted, 2)
@@ -87,5 +87,5 @@ def postprocessing(args, cdf, is_dead, device='cpu', max_iters=10000, tol=1e-8, 
     print("b0:", b0)
     print("alpha:", alpha)
 
-
     return a0, b0, alpha
+
