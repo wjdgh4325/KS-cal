@@ -7,7 +7,7 @@ Below is the example to run the code.
 # DeepSurv
 python train_ks.py --name ks --dataset whas --data_dir data/whas/ --model SyntheticNN --model_dist cox --lam 0 --lr 1e-4 --dropout_rate 0.1 --batch_size 64 --num_epochs 1000
 # MTLR
-python train_ks.py --name ks --dataset whas --data_dir data/whas/ --model MTLRNN --model_dist mtlr --lam 0 --lr 1e-1 --num_cat_bins 20 --batch_size 64 --num_epochs 2000
+python train_ks.py --name ks --dataset whas --data_dir data/whas/ --model MTLRNN --model_dist mtlr --lam 0 --lr 1e-2 --num_cat_bins 20 --batch_size 64 --num_epochs 1000
 # Parametric model
 python train_ks.py --name ks --dataset whas --data_dir data/whas/ --model SyntheticNN --model_dist lognormal --lam 0 --lr 1e-3 --dropout_rate 0.1 --batch_size 64 --num_epochs 1000
 # CRPS
