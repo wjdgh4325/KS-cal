@@ -155,61 +155,24 @@ class ModelEvaluator_test(object):
             torch.save(train_tte, "./train_tte.pt")
             torch.save(train_event, "./train_event.pt")
 
-        if self.args.postprocessing:
-            if phase == 'valid':
-                a0, b0, alpha = util.postprocessing(cdf=all_cdf, is_dead=is_dead, args=self.args, device=DEVICE)
-                torch.save(a0, "./a0.pt")
-                torch.save(b0, "./b0.pt")
-                torch.save(alpha, "./alpha.pt")
+        if phase == 'test':
+            train_tte = torch.load("./train_tte.pt", weights_only=True)
+            train_event = torch.load("./train_event.pt", weights_only=True)
+            import os
+            if os.path.exists("./train_tte.pt"):
+                os.remove("./train_tte.pt")
+            if os.path.exists("./train_event.pt"):
+                os.remove("./train_event.pt")
                 
-            if phase == 'test':
-                import os
-                train_tte = torch.load("./train_tte.pt", weights_only=True)
-                train_event = torch.load("./train_event.pt", weights_only=True)
-                a0 = torch.load("./a0.pt", weights_only=True)
-                b0 = torch.load("./b0.pt", weights_only=True)
-                alpha = torch.load("./alpha.pt", weights_only=True)
-                if os.path.exists("./train_tte.pt"):
-                    os.remove("./train_tte.pt")
-                if os.path.exists("./train_event.pt"):
-                    os.remove("./train_event.pt")
-                if os.path.exists("./a0.pt"):
-                    os.remove("./a0.pt")
-                if os.path.exists("./b0.pt"):
-                    os.remove("./b0.pt")
-                if os.path.exists("./alpha.pt"):
-                    os.remove("./alpha.pt")
-
-                cdf_km, tte_km, is_dead_km = util.cdf_all_points(args=self.args)
-                KS_post = util.metric_after_pp(args=self.args, cdf=cdf_km, train_tte=train_tte, train_event=train_event,
-                                            tte=tte_km, is_dead=is_dead_km, a0=a0, b0=b0, alpha=alpha)
-                print("C-index:", KS_post[0].item())
-                print("S-cal(20):", KS_post[1].item())
-                print("D-cal(20):", KS_post[2].item())
-                print("KS-cal:", KS_post[3].item())
-                print("KM-cal:", KS_post[4].item())
-                print("IBS:", KS_post[5].item())
-                print("----------------------------------------------------")
-
-        else:
-            if phase == 'test':
-                train_tte = torch.load("./train_tte.pt", weights_only=True)
-                train_event = torch.load("./train_event.pt", weights_only=True)
-                import os
-                if os.path.exists("./train_tte.pt"):
-                    os.remove("./train_tte.pt")
-                if os.path.exists("./train_event.pt"):
-                    os.remove("./train_event.pt")
-                    
-                cdf_km, tte_km, is_dead_km = util.cdf_all_points(args=self.args)
-                km_calibration = util.km_calibration(cdf=cdf_km, tte=tte_km, is_dead=is_dead_km, device=DEVICE)
-                test_tte = tte_km
-                test_event = is_dead_km
-                IBS = util.integrated_brier_score(train_tte=train_tte, train_event=train_event, 
-                                                test_tte=test_tte, test_event=test_event, 
-                                                cdf_test=cdf_km, time=test_tte)
-                metrics[phase + '_' + 'KM-cal'] = km_calibration
-                metrics[phase + '_' + 'IBS'] = IBS
+            cdf_km, tte_km, is_dead_km = util.cdf_all_points(args=self.args)
+            km_calibration = util.km_calibration(cdf=cdf_km, tte=tte_km, is_dead=is_dead_km, device=DEVICE)
+            test_tte = tte_km
+            test_event = is_dead_km
+            IBS = util.integrated_brier_score(train_tte=train_tte, train_event=train_event, 
+                                            test_tte=test_tte, test_event=test_event, 
+                                            cdf_test=cdf_km, time=test_tte)
+            metrics[phase + '_' + 'KM-cal'] = km_calibration
+            metrics[phase + '_' + 'IBS'] = IBS
 
         print(' ---- {} epoch Concordance {:.4f}'.format(phase, concordance))
         print(' ---- {} epoch end S-cal(20) {:.5f}'.format(phase, approx_s_calibration))
@@ -261,4 +224,5 @@ class ModelEvaluator_test(object):
         metrics = {phase + '_' + 'loss': loss_meter.avg}
 
         return metrics
+
 
