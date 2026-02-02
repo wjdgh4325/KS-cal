@@ -84,20 +84,6 @@ def KSP(args):
     print("KS-sum:", ksp_result_test[6].item())
     print("KS-var:", ksp_result_test[7].item())
     
-    workbook = load_workbook(filename='./tmp_test.xlsx')
-    sheet = workbook.active
-    last_row = sheet.max_row
-    sheet.cell(row=last_row+1, column=1, value=ksp_result_test[0].item())
-    sheet.cell(row=last_row+1, column=2, value=ksp_result_test[1].item())
-    sheet.cell(row=last_row+1, column=3, value=ksp_result_test[2].item())
-    sheet.cell(row=last_row+1, column=4, value=ksp_result_test[3].item())
-    sheet.cell(row=last_row+1, column=5, value=ksp_result_test[4].item())
-    sheet.cell(row=last_row+1, column=6, value=ksp_result_test[5].item())
-    sheet.cell(row=last_row+1, column=7, value=ksp_result_test[6].item())
-    sheet.cell(row=last_row+1, column=8, value=ksp_result_test[7].item())
-    sheet.cell(row=last_row+1, column=9, value=(f'{args.dataset}_{args.model_dist}_ksp'))
-    workbook.save('./tmp_test.xlsx')
-
 if __name__ == '__main__':
     parser = TestArgParser()
     args = parser.parse_args()
@@ -110,3 +96,4 @@ if __name__ == '__main__':
 
     with torch.no_grad():
         metrics = KSP(args)
+
